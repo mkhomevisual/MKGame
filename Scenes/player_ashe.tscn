@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://buckx68j4snqk"]
+
+[ext_resource type="Script" uid="uid://dr3qkqwowtylt" path="res://Scripts/player_ashe.gd" id="1_sgjnj"]
+[ext_resource type="Texture2D" uid="uid://c4aelfndvsbh" path="res://Assets/Player/Char2/char2-right.png" id="2_nel4e"]
+[ext_resource type="Texture2D" uid="uid://bgctk3w4oc2se" path="res://Assets/Player/Player-glow.png" id="3_djxie"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v40ao"]
+size = Vector2(9.20354, 18.6726)
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+script = ExtResource("1_sgjnj")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.13, 0.13)
+texture = ExtResource("2_nel4e")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.375)
+scale = Vector2(2.825, 2.825)
+shape = SubResource("RectangleShape2D_v40ao")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+scale = Vector2(4.57, 4.57)
+zoom = Vector2(4, 4)
+
+[node name="ShootGlow" type="Sprite2D" parent="."]
+z_index = 2
+position = Vector2(4, -4)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_djxie")

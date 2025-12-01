@@ -26,6 +26,7 @@ script = ExtResource("1_kln2b")
 
 [node name="Player" parent="." instance=ExtResource("1_r150o")]
 position = Vector2(17.82, 0)
+skill_e_cooldown = 2.0
 
 [node name="EnemySpawner" type="Node" parent="."]
 script = ExtResource("3_kln2b")
