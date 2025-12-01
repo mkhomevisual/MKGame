@@ -1,9 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://nb3wxvil2x6j"]
+[gd_scene load_steps=12 format=3 uid="uid://nb3wxvil2x6j"]
 
 [ext_resource type="Script" uid="uid://dpw5ogksace1y" path="res://Scripts/main.gd" id="1_kln2b"]
 [ext_resource type="PackedScene" uid="uid://csgfe5ptvwgw5" path="res://Scenes/player.tscn" id="1_r150o"]
-[ext_resource type="Script" uid="uid://7hbyrd18kmhk" path="res://Scripts/spawner.gd" id="3_kln2b"]
+[ext_resource type="Script" uid="uid://deowb0tstwni6" path="res://Scripts/spawner.gd" id="3_kln2b"]
+[ext_resource type="PackedScene" uid="uid://dr22rnpbongxl" path="res://Scenes/enemy.tscn" id="4_jw32o"]
 [ext_resource type="Texture2D" uid="uid://b6rrkmjg8vac1" path="res://Assets/Enviroment/Floorer.png" id="4_rgh2o"]
+[ext_resource type="PackedScene" uid="uid://tkq7s05faq21" path="res://Scenes/enemy_shooter.tscn" id="5_50glp"]
+[ext_resource type="PackedScene" uid="uid://b6vkmwji08gff" path="res://Scenes/enemy_tank.tscn" id="6_vy5pj"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_pbw6q"]
 font_size = 20
@@ -26,6 +29,15 @@ position = Vector2(17.82, 0)
 
 [node name="EnemySpawner" type="Node" parent="."]
 script = ExtResource("3_kln2b")
+spawn_radius_min = 300.0
+spawn_radius_max = 500.0
+enemy_scenes = Array[PackedScene]([ExtResource("4_jw32o"), ExtResource("5_50glp"), ExtResource("6_vy5pj")])
+spawn_mode = 0
+min_spawn_interval = null
+accel_factor = 0.5
+wave_size = 30
+wave_interval = 10.0
+max_enemies = null
 
 [node name="SpawnTimer" type="Timer" parent="EnemySpawner"]
 

@@ -98,12 +98,12 @@ func _spawn_enemy() -> void:
 	# limit nepřátel na mapě
 	if max_enemies > 0 and _count_enemies() >= max_enemies:
 		return
-	# Pick a random enemy scene from the list.  If the list is empty, do nothing.
-	if enemy_scenes.size() == 0:
-		return
-	var scene := enemy_scenes[randi() % enemy_scenes.size()]
-	var enemy := scene.instantiate()
-	_enemies_root.add_child(enemy)
+    # Pick a random enemy scene from the list.  If the list is empty, do nothing.
+    if enemy_scenes.size() == 0:
+        return
+    var scene := enemy_scenes[randi() % enemy_scenes.size()]
+    var enemy := scene.instantiate()
+    _enemies_root.add_child(enemy)
 
 	# náhodný úhel + náhodný radius v intervalu <min,max>
 	var angle: float = randf() * TAU

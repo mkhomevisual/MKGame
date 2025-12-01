@@ -6,7 +6,7 @@ class_name CharacterBase
 @export var speed: float = 50.0
 @export var fire_cooldown: float = 0.2
 @export var min_fire_cooldown: float = 0.05
-@export var max_hp: int = 5
+@export var max_hp: int = 5000
 @export var auto_target_radius: float = 250.0
 
 # Defaultní projektil – konkrétní postavy si mohou v inspektoru přepsat na jinou scénu

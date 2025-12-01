@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://dr22rnpbongxl"]
 
-[ext_resource type="Script" uid="uid://bhtlttbbbthcs" path="res://Scripts/enemy.gd" id="1_1f0kj"]
+[ext_resource type="Script" uid="uid://bbsvelfgc6oyb" path="res://Scripts/enemy.gd" id="1_1f0kj"]
 [ext_resource type="Texture2D" uid="uid://dhro17fdudecw" path="res://Assets/Enemy/m1.png" id="2_287tu"]
 [ext_resource type="Texture2D" uid="uid://d3h7rxgbqdhro" path="res://Assets/Enemy/m2.png" id="3_0830c"]
 [ext_resource type="Texture2D" uid="uid://dswpr1v08hnc4" path="res://Assets/Enemy/Ghost.png" id="4_287tu"]
@@ -27,7 +27,7 @@ size = Vector2(88.8889, 71.1111)
 size = Vector2(91.1111, 71.1111)
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
-scale = Vector2(0.1, 0.1)
+scale = Vector2(0.15, 0.15)
 script = ExtResource("1_1f0kj")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

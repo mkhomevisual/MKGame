@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://tkq7s05faq21"]
+
+[ext_resource type="Script" uid="uid://cmeeelt7h0623" path="res://Scripts/enemy_shooter.gd" id="1_mjlx5"]
+[ext_resource type="Texture2D" uid="uid://mmbhtuiidgra" path="res://Assets/Enemy/acolyte.png" id="2_mjlx5"]
+[ext_resource type="Texture2D" uid="uid://xnmvc6lv5hil" path="res://Assets/Enemy/Scalovatko.png" id="3_57vpb"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_57vpb"]
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+scale = Vector2(0.4, 0.4)
+script = ExtResource("1_mjlx5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_mjlx5")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="DamageArea" type="CollisionShape2D" parent="Area2D" groups=["enemy_damage"]]
+position = Vector2(-7.86, 0)
+scale = Vector2(1.97, 2.61)
+shape = SubResource("CapsuleShape2D_57vpb")
+
+[node name="DamageArea2" type="CollisionShape2D" parent="." groups=["enemy_damage"]]
+position = Vector2(-7.86, 0)
+scale = Vector2(1.97, 2.61)
+shape = SubResource("CapsuleShape2D_57vpb")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_57vpb")
