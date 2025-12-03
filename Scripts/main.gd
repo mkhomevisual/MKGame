@@ -1,13 +1,21 @@
 extends Node2D  # Root scény
 
+
+
 # -------- SCORE --------
 var score: int = 0  # Celkové skóre
 
 # -------- XP / LEVEL --------
-var xp: int = 0                 # Aktuální XP
-var level: int = 1              # Aktuální level
-@export var xp_to_next_level: int = 5         # XP potřeba na další level
-@export var xp_level_multiplier: float = 1.5  # Násobení XP potřeby po levelu
+var xp: int = 0
+var level: int = 1
+@export var xp_to_next_level: int = 5
+@export var xp_level_multiplier: float = 1.5  # kolik se násobí requirement
+
+# XP multiplier (kolik XP reálně dostaneš z krystalu)
+@export var base_xp_multiplier: float = 1.0        # základ
+@export var xp_mult_per_level: float = 0.10        # +10 % XP za každý level nad 1
+
+var _elapsed_time: float = 0.0                     # pokud ještě nemáš, přidej
 
 # -------- STATY PRO LEVEL-UP --------
 enum StatUpgrade {
@@ -57,7 +65,12 @@ func _ready() -> void:
 	_update_score_label()
 	_update_level_label()
 	# HealthLabel nastaví Player přes update_player_health()
-
+	
+	var ps := preload("res://Scenes/damage_numbers.tscn")
+	var dn := ps.instantiate()
+	add_child(dn)
+	dn.global_position = Vector2(400, 300)  # někde doprostřed
+	dn.show_number(99)
 
 # ====================================================================
 #   SCORE API (volá Enemy)
@@ -203,3 +216,8 @@ func show_game_over() -> void:
 func _on_game_over_repeat_pressed() -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+func get_xp_multiplier() -> float:
+	# Jednoduchý příklad: víc XP s levelem
+	var mult := base_xp_multiplier + xp_mult_per_level * float(level - 1)
+	return max(mult, 0.0)

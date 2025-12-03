@@ -139,3 +139,19 @@ func _cast_skill_r() -> void:
 	# Prozatím jen použijeme původní implementaci R z player.gd (tower).
 	# Později sem dáme Glacial Zone.
 	super._cast_skill_r()
+
+func _update_direction_visual(_dir: Vector2) -> void:
+	# Tady můžeš řešit čistě vizuál – např. flip sprite doleva/doprava.
+	if not has_node("Sprite2D"):
+		return
+
+	var spr := get_node("Sprite2D") as Sprite2D
+
+	match facing_direction:
+		CharacterBase.MoveDir.RIGHT:
+			spr.flip_h = false
+		CharacterBase.MoveDir.LEFT:
+			spr.flip_h = true
+		CharacterBase.MoveDir.UP, CharacterBase.MoveDir.DOWN:
+			# Zatím nic speciálního, jen držíme poslední horizontální flip
+			pass

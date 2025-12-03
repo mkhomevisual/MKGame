@@ -2,12 +2,25 @@ extends CharacterBody2D
 
 class_name CharacterBase
 
+# -------- SMĚR POHYBU (4-DIRECTION) --------
+enum MoveDir { RIGHT, LEFT, UP, DOWN }
+
+# Aktuální směrový stav – bude se přepisovat podle vstupu
+@export var facing_direction: MoveDir = MoveDir.DOWN
+# Jen textový helper, abys v Inspectoru viděl hezky "Right/Left/Up/Down"
+@export var facing_debug: String = "Down"
+
+
+
 # -------- EXPORTOVANÉ ZÁKLADNÍ STATY --------
 @export var speed: float = 50.0
 @export var fire_cooldown: float = 0.2
 @export var min_fire_cooldown: float = 0.05
 @export var max_hp: int = 5000
 @export var auto_target_radius: float = 250.0
+# Nové – pro plynulejší movement
+@export var acceleration: float = 2000.0
+@export var friction: float = 1200.0
 
 # Defaultní projektil – konkrétní postavy si mohou v inspektoru přepsat na jinou scénu
 @export var bullet_scene: PackedScene = preload("res://Scenes/bullet.tscn")
@@ -45,20 +58,63 @@ func _physics_process(delta: float) -> void:
 
 
 # -------- POHYB --------
-func _handle_movement(_delta: float) -> void:
-	var dir := Vector2.ZERO
-	dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-	dir.y = Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+func _handle_movement(delta: float) -> void:
+	var input_dir := Vector2.ZERO
+	input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+	input_dir.y = Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
 
-	if dir.length() > 0.0:
-		dir = dir.normalized()
-		_update_direction_visual(dir)
+	# Máme nějaký input
+	if input_dir.length() > 0.0:
+		input_dir = input_dir.normalized()
+
+		# update směru a vizuálu (směr si dál řešíš přes facing_direction)
+		_update_movement_direction(input_dir)
+		_update_direction_visual(input_dir)
+
+		# cílová rychlost = směr * speed
+		var target_velocity := input_dir * speed
+		velocity = velocity.move_toward(target_velocity, acceleration * delta)
 	else:
-		# Idle – žádný pohyb
+		# žádný input → zpomalujeme pomocí friction
+		if velocity.length() > 0.0:
+			velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 		_update_direction_visual(Vector2.ZERO)
 
-	velocity = dir * speed
+	# drobný “snap” na nulu, ať to nedriluje kvůli malým hodnotám
+	if velocity.length() < 1.0 and input_dir == Vector2.ZERO:
+		velocity = Vector2.ZERO
+
 	move_and_slide()
+
+
+
+# Určí aktuální facing_direction z vektoru dir (4 směry)
+func _update_movement_direction(dir: Vector2) -> void:
+	var new_dir: int
+
+	# Rozhodneme podle toho, která složka je větší – horizontální vs vertikální
+	if abs(dir.x) > abs(dir.y):
+		new_dir = MoveDir.RIGHT if dir.x > 0.0 else MoveDir.LEFT
+	else:
+		new_dir = MoveDir.DOWN if dir.y > 0.0 else MoveDir.UP
+
+	if new_dir != facing_direction:
+		facing_direction = new_dir
+		_update_facing_debug()
+		_on_direction_changed(new_dir)
+
+
+# Helper čistě pro Inspector – aktualizuje text
+func _update_facing_debug() -> void:
+	match facing_direction:
+		MoveDir.RIGHT:
+			facing_debug = "Right"
+		MoveDir.LEFT:
+			facing_debug = "Left"
+		MoveDir.UP:
+			facing_debug = "Up"
+		MoveDir.DOWN:
+			facing_debug = "Down"
 
 
 # -------- AUTO STŘELBA --------
@@ -150,13 +206,13 @@ func _die() -> void:
 
 # -------- UPGRADY STATŮ --------
 func upgrade_attack_speed() -> void:
-	fire_cooldown *= 0.85
+	fire_cooldown *= 0.7
 	if fire_cooldown < min_fire_cooldown:
 		fire_cooldown = min_fire_cooldown
 
 
 func upgrade_attack_damage() -> void:
-	attack_damage += 1
+	attack_damage += 0.5
 
 
 func upgrade_max_health() -> void:
@@ -168,15 +224,15 @@ func upgrade_max_health() -> void:
 
 
 func upgrade_bullet_speed() -> void:
-	bullet_speed_multiplier *= 1.15
+	bullet_speed_multiplier *= 1.5
 
 
 func upgrade_movement_speed() -> void:
-	speed *= 1.15
+	speed *= 1.13
 
 
 func upgrade_pickup_radius() -> void:
-	auto_target_radius *= 1.15
+	auto_target_radius *= 1.2
 
 
 # -------- AUGMENTY --------
@@ -192,7 +248,7 @@ func add_augment_split() -> void:
 	has_split = true
 
 
-# -------- HOOKY PRO POTOMKY (prázdné, aby parser neřval) --------
+# -------- HOOKY PRO POTOMKY --------
 func _handle_skills(_delta: float) -> void:
 	pass
 
@@ -210,4 +266,12 @@ func _play_shoot_glow() -> void:
 
 
 func _update_direction_visual(_dir: Vector2) -> void:
+	# Potomci (Player, Ashe…) si můžou přepsat a použít facing_direction.
+	# Tady defaultně nic neděláme.
+	pass
+
+
+func _on_direction_changed(_new_dir: int) -> void:
+	# Hook pro potomky – když se změní směr (RIGHT/LEFT/UP/DOWN),
+	# můžeš sem v Ashe dát třeba přepnutí animace.
 	pass

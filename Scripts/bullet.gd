@@ -1,25 +1,22 @@
-extends Area2D  # Bullet
+extends Area2D # Bullet
 
-@export var speed: float = 400.0        # základní rychlost střely
-@export var lifetime: float = 1.5       # životnost střely v sekundách
-@export var split_angle_deg: float = 25.0  # rozestup split střel ve stupních
-
+@export var speed: float = 100.0 # základní rychlost střely
+@export var lifetime: float = 1.5 # životnost střely v sekundách
+@export var split_angle_deg: float = 25.0 # rozestup split střel ve stupních
 # default chain range, když nic nenastavíš
 @export var default_chain_range: float = 200.0
 
-var base_speed: float = 0.0             # původní rychlost pro multiplikátor
-
+var base_speed: float = 0.0 # původní rychlost pro multiplikátor
 var _direction: Vector2 = Vector2.ZERO
 var _time_alive: float = 0.0
-
 var damage: int = 1
 
 # ---- PRŮSTŘEL ----
-var pierce_remaining: int = 0  # kolik ENEMY může střela ještě prostřelit (0 = default)
+var pierce_remaining: int = 0 # kolik ENEMY může střela ještě prostřelit (0 = default)
 
 # ---- SPLIT ----
 var split_on_hit: bool = false
-var split_generations: int = 0   # kolikrát se může tahle střela ještě „dělit“
+var split_generations: int = 0 # kolikrát se může tahle střela ještě „dělit“
 
 # ---- CHAIN ----
 var chain_jumps_remaining: int = 0
@@ -33,6 +30,8 @@ func _ready() -> void:
 	base_speed = speed
 	chain_range = default_chain_range
 	body_entered.connect(_on_body_entered)
+	# hráčské projektily – kvůli Ashe R zóně
+	add_to_group("player_bullet")
 
 
 func _physics_process(delta: float) -> void:
@@ -77,16 +76,13 @@ func _on_body_entered(body: Node) -> void:
 	# střela řeší jen enemy
 	if not body.is_in_group("enemy"):
 		return
-
 	if body.has_method("is_dead") and body.is_dead():
 		return
 
 	var did_hit := false
-
 	if body.has_method("take_damage"):
 		body.take_damage(damage)
 		did_hit = true
-
 	if body.has_method("apply_knockback"):
 		body.apply_knockback(_direction)
 
@@ -109,7 +105,7 @@ func _on_body_entered(body: Node) -> void:
 	if pierce_remaining > 0:
 		pierce_remaining -= 1
 		if pierce_remaining > 0:
-			return  # letí dál
+			return # letí dál
 
 	# default: zmizí
 	queue_free()
@@ -124,7 +120,6 @@ func _spawn_chain_bullet(from_enemy: Node2D) -> bool:
 		return false
 
 	var enemies_root := world.get_node("Enemies")
-
 	var best: Node2D = null
 	var best_dist2: float = chain_range * chain_range
 
@@ -177,7 +172,6 @@ func _spawn_split_bullets() -> void:
 
 	var base_dir := _direction
 	var angle_rad := deg_to_rad(split_angle_deg)
-
 	var dir1 := base_dir.rotated(angle_rad)
 	var dir2 := base_dir.rotated(-angle_rad)
 

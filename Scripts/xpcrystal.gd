@@ -2,9 +2,9 @@ extends Area2D  # XP krystal
 
 @export var xp_amount: int = 1
 
-@export var base_trigger_radius: float = 100.0   # základní radius, kdy začne magnet
-@export var min_magnet_speed: float = 20.0      # min rychlost přitahování
-@export var max_magnet_speed: float = 260.0     # max rychlost přitahování
+@export var base_trigger_radius: float = 150.0   # základní radius, kdy začne magnet
+@export var min_magnet_speed: float = 100.0      # min rychlost přitahování
+@export var max_magnet_speed: float = 400.0      # max rychlost přitahování
 
 var _player: Node2D = null
 var _is_magnetized: bool = false
@@ -23,7 +23,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	# najdeme playera, pokud ještě není uložený
 	if _player == null:
-		var world: Node = get_tree().current_scene
+		var world := get_tree().current_scene
 		if world != null and world.has_node("Player"):
 			_player = world.get_node("Player") as Node2D
 
@@ -94,7 +94,15 @@ func _on_body_entered(body: Node) -> void:
 
 
 func _collect() -> void:
-	var world: Node = get_tree().current_scene
+	var world := get_tree().current_scene
 	if world != null and world.has_method("add_xp"):
-		world.add_xp(xp_amount)
+		var amount := xp_amount
+
+		# Volitelně: XP multiplier z Mainu (pokud má funkci get_xp_multiplier).
+		if world.has_method("get_xp_multiplier"):
+			var mult := float(world.get_xp_multiplier())
+			amount = int(round(float(xp_amount) * mult))
+
+		world.add_xp(amount)
+
 	queue_free()
